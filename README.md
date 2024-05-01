@@ -88,7 +88,7 @@ docker run --rm -e "TZ=Europe/London" -e "TOKEN=<token>" e926-2-tg
 ```
 
 ---
-[^1]: The configuration presented is written in Python, but the configuration file [config.json](/config.json) is in JSON format. And you can't use Anything() in JSON.
+[^1]: The configuration presented is written in Python, but the configuration file [config.json](/config.json) is in JSON format. You can't use Anything() in JSON.
 [^2]: [e926 limits](https://e926.net/help/api#posts_list)
 [^3]: [Telegram limits](https://limits.tginfo.me/)
 [^4]: [`datetime` — Python 3.11 documentation](https://docs.python.org/3.11/library/datetime.html#timedelta-objects)
