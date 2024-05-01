@@ -1,0 +1,15 @@
+{
+    "tags": "fox fluffy meme order:score -animated",
+    "use_last_id": true,
+    "end_page": 10,
+    "schedule_limit": 10,
+    "blacklist": [
+        "rating:q"
+    ],
+    "schedule": [
+        "10:00:00",
+        "13:00:00",
+        "16:00:00",
+        "19:00:00"
+    ]
+}
