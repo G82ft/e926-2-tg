@@ -7,5 +7,5 @@ RUN pip3 install -r requirements.txt
 RUN apk add --no-cache tzdata
 
 RUN crontab -l | { cat; echo "00	12	*	*	*	cd /app && python3 main.py"; } | crontab -
-#CMD ["crond", "-f"]
-CMD ["/bin/ash"]
+CMD ["crond", "-f"]
+#CMD ["/bin/ash"]
