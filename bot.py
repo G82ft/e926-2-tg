@@ -11,7 +11,7 @@ bot = Client(
     "e926-2-tg",
     api_id=414121,
     api_hash='db09ccfc2a65e1b14a937be15bdb5d4b',
-    bot_token=getenv("TOKEN")
+    phone_number=getenv("PHONE")
 )
 
 
@@ -29,7 +29,6 @@ async def main():
             schedule = config.get_schedule(datetime.fromtimestamp(scheduled[0].date))
 
         for i, post in enumerate(get_posts(config.get("tags")), start=len(scheduled)):
-            print(i, post)
             if i >= config.get("schedule_limit"):
                 break
             await bot.send_photo(config.get("peer"), post, post, schedule_date=next(schedule))
