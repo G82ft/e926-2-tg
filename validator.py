@@ -24,7 +24,7 @@ def validate_config(file: str = "config.json") -> None:
 
     print(f'Validating "{abspath(file)}"...')
     for name, args, validate_arg in VALIDATION:
-        print(f'{name}: ', end='')
+        print(f'{name}: ', end='', flush=True)
         if (
             (value := get(name, config_file=file)) == DEFAULT[name]
             or name == "start_id" and get("use_last_id")
