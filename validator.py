@@ -3,7 +3,7 @@ from datetime import datetime
 from os.path import abspath
 
 from api import get_posts, s, ORIGIN
-from config import get, DEFAULT
+from config import get, DEFAULT, get_last_id
 from logs import get_logger
 
 parser: ArgumentParser = ArgumentParser(
@@ -23,18 +23,14 @@ logger = get_logger(__name__)
 
 
 def validate_config(file: str = "config.json") -> None:
-    # TODO: add is_default()
     invalid: bool = False
 
     logger.info(f'Validating "{abspath(file)}"...')
     for name, args, validate_arg in VALIDATION:
-        if (
-                (value := get(name, config_file=file)) == DEFAULT[name]
-                or name == "start_id" and get("use_last_id")
-        ):
+        if is_default(name, config_file=file):
             logger.info(f'{name}: DEFAULT')
             continue
-        if check := validate_arg(value, name, *args):
+        if check := validate_arg(get(name, config_file=file), name, *args):
             logger.error(f"{name}: {check}")
             invalid = True
             continue
@@ -106,6 +102,12 @@ def check_schedule(schedule: list, name: str = "schedule") -> str:
             datetime.strptime(time, '%H:%M:%S')
         except ValueError:
             return f'{name}:{ITEM} "{time}" must be in HH:MM:SS format.'
+
+
+def is_default(name: str, *,  config_file: str) -> bool:
+    if name == "start_id" and get("use_last_id") and get_last_id() is not None:
+        return True
+    return get(name, config_file=config_file) == DEFAULT[name]
 
 
 VALIDATION = (

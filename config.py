@@ -32,7 +32,7 @@ def get(key: str, *,
     if key not in DEFAULT:
         raise KeyError(key)
     elif key == "start_id":
-        if get("use_last_id") and (last_id := get_last_id()):
+        if get("use_last_id") and (last_id := get_last_id()) is not None:
             return last_id
 
     global cached
