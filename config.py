@@ -4,6 +4,7 @@ from itertools import cycle
 from json import load, dump
 
 from classes.anything import Anything
+from classes.next import Next
 
 DEFAULT: dict[str: int | str | list[str | dict[str: str]]] = {
     "peer": "me",
@@ -11,7 +12,7 @@ DEFAULT: dict[str: int | str | list[str | dict[str: str]]] = {
     "use_last_id": False,
     "start_id": Anything(),
     "end_id": -1,
-    "start_page": Anything(),
+    "start_page": 1,
     "end_page": 1,
     "schedule_limit": 10,
     "blacklist": [
@@ -27,18 +28,19 @@ DEFAULT: dict[str: int | str | list[str | dict[str: str]]] = {
 cached: dict[str: int | str | list[str | dict[str: str]]] = {}
 
 
-def get(key: str, invalidate: bool = False) -> int | str | list[str | dict[str: str]]:
+def get(key: str, *,
+        config_file: str = "config.json") -> int | Next | Anything | str | list[str | dict[str: str]]:
     if key not in DEFAULT:
         raise KeyError(key)
     elif key == "start_id":
-        if get("use_last_id") and get_last_id():
-            return get_last_id()
+        if get("use_last_id") and (last_id := get_last_id()):
+            return last_id
 
     global cached
-    if cached and not invalidate:
+    if cached:
         return cached.get(key, DEFAULT[key])
 
-    with open("config.json", "r", encoding="utf-8") as f:
+    with open(config_file, "r", encoding="utf-8") as f:
         cached = load(f)
         return cached.get(key, DEFAULT[key])
 
@@ -61,7 +63,7 @@ def get_schedule(dt: datetime):
 def get_last_id():
     if os.path.isfile("last_id.json"):
         with open("last_id.json", "r") as f:
-            return load(f)["id"]
+            return Next(load(f)["id"])
 
     return None
 

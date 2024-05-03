@@ -14,13 +14,13 @@ DEFAULT_LIMIT: int = 75
 LIMIT: int = 320
 
 
-def get_posts(tags: str):
+def get_posts(tags: str, validate: bool = False):
     posts: list
 
     start = (config.get("start_page") * DEFAULT_LIMIT // LIMIT) or 1
     end = config.get("end_page") * DEFAULT_LIMIT // LIMIT + 2  # +1 for range and +1 for floor
 
-    started: bool = False
+    started: bool = validate
 
     for page in range(start, end):
         if tags.startswith("fav:!") and " " not in tags:
@@ -32,13 +32,12 @@ def get_posts(tags: str):
         if not posts:
             return
 
-        print(' '.join(map(lambda x: f'{x["id"]}', posts)))
         for post in posts:
             if not started and config.get("start_id") != post["id"]:
                 continue
 
             started = True
-            if not is_blacklisted(post, config.get("blacklist")):
+            if not is_blacklisted(post, config.get("blacklist")) or validate:
                 yield f'https://e926.net/posts/{post["id"]}'
 
             if config.get("end_id") == post["id"]:
