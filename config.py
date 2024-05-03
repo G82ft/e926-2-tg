@@ -4,7 +4,6 @@ from itertools import cycle
 from json import load, dump
 
 from classes.anything import Anything
-from classes.next import Next
 
 DEFAULT: dict[str: int | str | list[str | dict[str: str]]] = {
     "peer": "me",
@@ -29,7 +28,7 @@ cached: dict[str: int | str | list[str | dict[str: str]]] = {}
 
 
 def get(key: str, *,
-        config_file: str = "config.json") -> int | Next | Anything | str | list[str | dict[str: str]]:
+        config_file: str = "config.json") -> int | Anything | str | list[str | dict[str: str]]:
     if key not in DEFAULT:
         raise KeyError(key)
     elif key == "start_id":
@@ -63,7 +62,7 @@ def get_schedule(dt: datetime):
 def get_last_id():
     if os.path.isfile("last_id.json"):
         with open("last_id.json", "r") as f:
-            return Next(load(f)["id"])
+            return load(f)["id"]
 
     return None
 

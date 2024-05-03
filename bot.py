@@ -6,6 +6,7 @@ from pyrogram.raw.functions.messages import GetScheduledHistory
 
 import config
 from api import get_posts
+from logs import get_logger
 
 bot = Client(
     "e926-2-tg",
@@ -14,10 +15,13 @@ bot = Client(
     phone_number=getenv("PHONE")
 )
 
+logger = get_logger(__name__)
 
-# async
+
 async def main():
     post: str = ""
+    reached_end: bool = False
+
     async with bot:
         scheduled: list = (await bot.invoke(GetScheduledHistory(
             peer=await bot.resolve_peer(config.get("peer")),
@@ -30,8 +34,21 @@ async def main():
 
         for i, post in enumerate(get_posts(config.get("tags")), start=len(scheduled)):
             if i >= config.get("schedule_limit"):
+                logger.info(f'Schedule limit reached ({i})')
                 break
-            await bot.send_photo(config.get("peer"), post, post, schedule_date=next(schedule))
+
+            schedule_date = next(schedule)
+            logger.info(f'Scheduling post "{post}" at {schedule_date}')
+            await bot.send_photo(config.get("peer"), post, post, schedule_date=schedule_date)
+        else:
+            reached_end = True
 
     if config.get("use_last_id") and post:
-        config.set_last_id(int(post.split("/")[-1]))
+        if reached_end:
+            logger.warning('No more posts to schedule')
+            value = None
+        else:
+            logger.debug(f'Last ID: {post}')
+            value = int(post.split("/")[-1])
+
+        config.set_last_id(value)

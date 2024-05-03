@@ -5,6 +5,7 @@ from urllib.parse import quote_plus
 import requests
 
 import config
+from logs import get_logger
 
 s = requests.Session()
 s.headers["user-agent"] = "e926-2-tg-bot/test (by G82ft)"
@@ -13,6 +14,8 @@ ORIGIN: str = "https://e926.net"
 DEFAULT_LIMIT: int = 75
 LIMIT: int = 320
 
+logger = get_logger(__name__)
+
 
 def get_posts(tags: str, validate: bool = False):
     posts: list
@@ -20,18 +23,28 @@ def get_posts(tags: str, validate: bool = False):
     start = (config.get("start_page") * DEFAULT_LIMIT // LIMIT) or 1
     end = config.get("end_page") * DEFAULT_LIMIT // LIMIT + 2  # +1 for range and +1 for floor
 
+    logger.debug(f'Getting posts from page {start} to {end}...')
+
     started: bool = validate
+
+    if "rating:s" not in tags:  # TODO: e926 requires rating:s
+        tags = tags.strip() + " rating:s"
 
     for page in range(start, end):
         if tags.startswith("fav:!") and " " not in tags:
+            logger.debug(f'Favorites for user "{tags.split("!")[1]}", page {page}...')
             url = f'{ORIGIN}/favorites.json?user_id={tags.split("!")[1]}&page={page}&limit={LIMIT}'
         else:
+            logger.debug(f'Tags "{tags}", page {page}...')
             url = f'{ORIGIN}/posts.json?tags={quote_plus(tags)}&page={page}&limit={LIMIT}'
         sleep(0.5)  # Rate limit (https://e926.net/help/api; Basic concepts > Rate limiting)
+
         if "posts" not in (res := s.get(url).json()):
+            logger.error(f'Failed to get posts: {res}')
             return
         posts = res["posts"]
         if not posts:
+            logger.warning(f'No posts found with tags "{tags}"')
             return
 
         for post in posts:
@@ -40,9 +53,11 @@ def get_posts(tags: str, validate: bool = False):
 
             started = True
             if not is_blacklisted(post, config.get("blacklist")) or validate:
+                logger.debug(f'https://e926.net/posts/{post["id"]}')
                 yield f'https://e926.net/posts/{post["id"]}'
 
             if config.get("end_id") == post["id"]:
+                logger.info(f'End reached: {post["id"]}')
                 return
 
 

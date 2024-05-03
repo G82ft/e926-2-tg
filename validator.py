@@ -4,6 +4,7 @@ from os.path import abspath
 
 from api import get_posts, s, ORIGIN
 from config import get, DEFAULT
+from logs import get_logger
 
 parser: ArgumentParser = ArgumentParser(
     description="Script for verifying config for e926-2-tg.",
@@ -18,26 +19,31 @@ parser.add_argument(
 VALIDATION: tuple[tuple[str, tuple | dict, any], ...]
 ITEM: str = "item"
 
+logger = get_logger(__name__)
+
 
 def validate_config(file: str = "config.json") -> None:
+    # TODO: add is_default()
     invalid: bool = False
 
-    print(f'Validating "{abspath(file)}"...')
+    logger.info(f'Validating "{abspath(file)}"...')
     for name, args, validate_arg in VALIDATION:
-        print(f'{name}: ', end='', flush=True)
         if (
-            (value := get(name, config_file=file)) == DEFAULT[name]
-            or name == "start_id" and get("use_last_id")
+                (value := get(name, config_file=file)) == DEFAULT[name]
+                or name == "start_id" and get("use_last_id")
         ):
-            print(f'DEFAULT')
+            logger.info(f'{name}: DEFAULT')
             continue
         if check := validate_arg(value, name, *args):
+            logger.error(f"{name}: {check}")
             invalid = True
+            continue
 
-        print(f"{check or 'OK'}")
+        logger.info(f'{name}: OK')
 
-    print(f"CONFIG: {'FAILED' if invalid else 'OK'}")
+    logger.info(f'CONFIG: OK')
     if invalid:
+        logger.critical(f'CONFIG: FAILED')
         exit(1)
 
 
