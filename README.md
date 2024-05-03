@@ -32,22 +32,22 @@ class Anything:
 
 
 DEFAULT = {
-   "peer": "me",
-   "tags": "order:score meme",
-   "use_last_id": False,
-   "start_id": Anything(),
-   "end_id": -1,
-   "start_page": Anything(),
-   "end_page": 1,
-   "schedule_limit": 10,
-   "blacklist": [
-      "rating:e",
-      "rating:q"
-   ],
-   "schedule": [
-      "12:00:00"
-   ],
-   "time_tolerance": 60
+    "peer": "me",
+    "tags": "order:score meme",
+    "use_last_id": False,
+    "start_id": Anything(),
+    "end_id": -1,
+    "start_page": 1,
+    "end_page": 1,
+    "schedule_limit": 10,
+    "blacklist": [
+        "rating:e",
+        "rating:q"
+    ],
+    "schedule": [
+        "12:00:00"
+    ],
+    "time_tolerance": 60
 }
 ```
 
