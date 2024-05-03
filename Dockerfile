@@ -6,7 +6,7 @@ WORKDIR /app
 RUN pip3 install -r requirements.txt
 RUN apk add --no-cache tzdata # && apk add nano
 
-RUN crontab -l | { cat; echo "12	00	*	*	*	cd /app && python3 main.py"; } | crontab -
+RUN crontab -l | { cat; echo "00	12	*	*	*	cd /app && python3 main.py"; } | crontab -
 
 #CMD ["/bin/ash"]
 CMD ["crond", "-f"]
