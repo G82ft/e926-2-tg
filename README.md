@@ -89,6 +89,7 @@ When running, you must specify [timezone](https://en.wikipedia.org/wiki/List_of_
 ```shell
 docker run --rm -e "TZ=Europe/London" -e "PHONE=1234567890" e926-2-tg
 ```
+Also, you can specify [LOG_LEVEL](https://docs.python.org/3.11/library/logging.html#logging-levels).
 
 
 ## Scheduling

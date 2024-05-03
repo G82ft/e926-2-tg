@@ -9,6 +9,7 @@ FORMATTER = logging.Formatter(
     style='{',
     datefmt='%d.%m.%y %H:%M:%S'
 )
+LOG_LEVEL = os.getenv('LOG_LEVEL') or 'INFO'
 
 
 def get_logger(name: str) -> logging.Logger:
@@ -22,14 +23,14 @@ def get_logger(name: str) -> logging.Logger:
         when='midnight'
     )
     handler.setFormatter(FORMATTER)
-    handler.setLevel(os.getenv('LOG_LEVEL', 'INFO'))
+    handler.setLevel(LOG_LEVEL)
     logger.addHandler(handler)
 
     handler = logging.StreamHandler(sys.stdout)
     handler.setFormatter(FORMATTER)
-    handler.setLevel(os.getenv('LOG_LEVEL', 'INFO'))
+    handler.setLevel(LOG_LEVEL)
     logger.addHandler(handler)
 
-    logger.setLevel(os.getenv('LOG_LEVEL', 'INFO'))
+    logger.setLevel(LOG_LEVEL)
 
     return logger
