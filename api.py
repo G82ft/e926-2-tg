@@ -28,7 +28,9 @@ def get_posts(tags: str, validate: bool = False):
         else:
             url = f'{ORIGIN}/posts.json?tags={quote_plus(tags)}&page={page}&limit={LIMIT}'
         sleep(0.5)  # Rate limit (https://e926.net/help/api; Basic concepts > Rate limiting)
-        posts = s.get(url).json()["posts"]
+        if "posts" not in (res := s.get(url).json()):
+            return
+        posts = res["posts"]
         if not posts:
             return
 
