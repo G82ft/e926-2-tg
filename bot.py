@@ -46,7 +46,7 @@ async def main():
     if config.get("use_last_id") and post:
         if reached_end:
             logger.warning('No more posts to schedule')
-            value = None
+            value = -1
         else:
             logger.debug(f'Last ID: {post}')
             value = int(post.split("/")[-1])
