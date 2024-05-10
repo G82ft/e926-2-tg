@@ -57,6 +57,16 @@ def check_range(value: any, name: str, min_: int, max_: int) -> str:
     )
 
 
+def check_options(value: any, name: str, options: list) -> str:
+    return (
+                check_type(value, name, type(options[0]))
+                or (
+                        value not in options
+                        and f'{name} must be in {options}.'
+                )
+        )
+
+
 def check_tags(tags: str, name: str = "tags") -> str:
     if check := check_type(tags, name, str):
         return check
@@ -104,7 +114,7 @@ def check_schedule(schedule: list, name: str = "schedule") -> str:
             return f'{name}:{ITEM} "{time}" must be in HH:MM:SS format.'
 
 
-def is_default(name: str, *,  config_file: str) -> bool:
+def is_default(name: str, *, config_file: str) -> bool:
     if name == "start_id" and get("use_last_id") and get_last_id() is not None:
         return True
     return get(name, config_file=config_file) == DEFAULT[name]
@@ -113,6 +123,8 @@ def is_default(name: str, *,  config_file: str) -> bool:
 VALIDATION = (
     ("peer", (str,), check_type),
     ("tags", (), check_tags),
+    ("post", (('sample', 'preview', 'link'),), check_options),
+    ("no_sample", (('skip', 'preview', 'link'),), check_options),
     ("use_last_id", (bool,), check_type),
     ("start_id", (), check_post_id),
     ("end_id", (), check_post_id),

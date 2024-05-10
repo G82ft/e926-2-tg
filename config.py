@@ -8,6 +8,8 @@ from classes.anything import Anything
 DEFAULT: dict[str: int | str | list[str | dict[str: str]]] = {
     "peer": "me",
     "tags": "order:score meme",
+    "post": "preview",
+    "no_sample": "skip",
     "use_last_id": False,
     "start_id": Anything(),
     "end_id": -1,

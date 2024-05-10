@@ -37,3 +37,16 @@ def get_logger(name: str) -> logging.Logger:
     logger.setLevel(LOG_LEVEL)
 
     return logger
+
+
+def get_skipped_logger() -> logging.Logger:
+    if not os.path.exists(LOG_PATH):
+        os.mkdir(LOG_PATH)
+
+    logger = logging.getLogger('skipped')
+    logger.setLevel(logging.WARNING)
+
+    handler = FileHandler(f'{LOG_PATH}/no_sample.log')
+    handler.setLevel(LOG_LEVEL)
+    logger.addHandler(handler)
+    return logger
