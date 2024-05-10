@@ -151,7 +151,7 @@ For example:
 }
 ```
 
-
+idk
 
 ---
 [^1]: The configuration presented is written in Python, but the configuration file [config.json](/config.json) is in JSON format. You can't use Anything() in JSON
