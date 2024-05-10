@@ -7,7 +7,7 @@ from config import get, DEFAULT, get_last_id
 from logs import get_logger
 
 parser: ArgumentParser = ArgumentParser(
-    description="Script for verifying config for e621-2-tg.",
+    description="Script for verifying config for e926-2-tg.",
     epilog="https://github.com/G82ft/e926-2-tg",
 )
 

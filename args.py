@@ -3,8 +3,8 @@ from argparse import ArgumentParser
 # Unfortunately this file is not used :(
 
 parser: ArgumentParser = ArgumentParser(
-    "e621-2-tg-bot",
-    description="Telegram bot for scheduling image posts from e621.",
+    "e926-2-tg-bot",
+    description="Telegram bot for scheduling image posts from e926.",
     epilog="https://github.com/G82ft/e926-2-tg",
 )
 
