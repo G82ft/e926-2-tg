@@ -10,7 +10,7 @@ from api import get_posts
 from logs import get_logger, get_skipped_logger
 
 bot = Client(
-    "e926-2-tg",
+    "e621-2-tg",
     api_id=414121,
     api_hash='db09ccfc2a65e1b14a937be15bdb5d4b',
     phone_number=getenv("PHONE")
