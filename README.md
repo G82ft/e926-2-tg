@@ -1,6 +1,6 @@
-# e926-to-tg
+# e621-to-tg
 
-Telegram userbot for scheduling image posts from [e926.net](https://e926.net).
+Telegram userbot for scheduling image posts from [e621.net](https://e621.net).
 
 
 ## Table of contents
@@ -60,7 +60,7 @@ DEFAULT = {
 |  Argument name   |    Type     |                  Acceptable values                  | Explanation                                                                                                                                                                     |
 |:----------------:|:-----------:|:---------------------------------------------------:|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 |      `peer`      |    `str`    |                String without spaces                | Username of peer to whom bot will send the posts                                                                                                                                |
-|      `tags`      |    `str`    |     String with valid tags separated by spaces      | String that represents a search on e926[^2]. If you want to send favourites in the order they were added, specify `fav:!{user_id}` as the only tag.                             |
+|      `tags`      |    `str`    |     String with valid tags separated by spaces      | String that represents a search on e621[^2]. If you want to send favourites in the order they were added, specify `fav:!{user_id}` as the only tag.                             |
 |      `post`      |    `str`    |         `"sample"`, `"preview"` or `"link"`         | Specifies format for sending posts. `"sample"` will send photo with link as caption, `"preview"` will use internal Telegram preview and `"link"` will send link without preview |
 |   `no_sample`    |    `str`    |          `"skip"`, `"preview"` or `"link"`          | Specifies fallback option if there is no sample for this post. Same meaning as values in `post`. Will be ignored if `post` is not `"sample"`                                    |
 |  `use_last_id`   |   `bool`    |                  `true` or `false`                  | Starts with the last ID from the previous planning                                                                                                                              |
@@ -69,7 +69,7 @@ DEFAULT = {
 |   `start_page`   |    `int`    | Integer from 1 to 750[^3] representing page number  | Ignores all posts until this page is reached (not accurate, take a page before the one you want to start with, and fine-tune with `start_id`)                                   |
 |   `start_page`   |    `int`    | Integer from 1 to 750[^3] representing page number  | Schedules all posts until this page is reached (not accurate, take a page after the one you want to end with, and fine-tune with `end_id`)                                      |
 | `schedule_limit` |    `int`    |             Integer from 1 to 100 [^4]              | Maximum numbers of scheduled messages (includes those already scheduled)                                                                                                        |
-|   `blacklist`    | `list[str]` | List of strings with valid tags separated by spaces | Same as blacklist on [e926.net](https://e926.net/help/blacklist) with some [minor changes](#blacklist)                                                                          |
+|   `blacklist`    | `list[str]` | List of strings with valid tags separated by spaces | Same as blacklist on [e621.net](https://e621.net/help/blacklist) with some [minor changes](#blacklist)                                                                          |
 |    `schedule`    |    `str`    |     String representing time in format HH:MM:SS     | Daily posting [schedule](#scheduling)                                                                                                                                           |
 | `time_tolerance` |    `int`    | Integer from 0 to 3600*24 [^5] representing seconds | Tolerance for detecting already scheduled posts (Telegram clients tend to use current seconds by default when scheduling)                                                       |
 
@@ -87,12 +87,12 @@ python3 validator.py [config]
 You must change [`config.json`](/config.json) ***before*** you build the image!
 ```shell
 cd e926-2-tg/
-docker build . -t e926-2-tg
+docker build . -t e621-2-tg
 ```
 
 When running, you must specify [timezone](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List) and phone number (without any spaces/symbols) via environment variables.
 ```shell
-docker run --rm -e "TZ=Europe/London" -e "PHONE=1234567890" e926-2-tg
+docker run --rm -e "TZ=Europe/London" -e "PHONE=1234567890" e621-2-tg
 ```
 Also, you can specify [LOG_LEVEL](https://docs.python.org/3.11/library/logging.html#logging-levels).
 
@@ -106,7 +106,7 @@ The bot checks daily if the schedule limit is reached. If not, it will add posts
 
 ## Blacklist
 
-Blacklist is made by hand to support multiple entries. It works as one on [e926.net](https://e926.net/help/blacklist), but tag syntax differs a bit.
+Blacklist is made by hand to support multiple entries. It works as one on [e621.net](https://e621.net/help/blacklist), but tag syntax differs a bit.
 
 It supports `-` (not) operator, but does not support the `~` (or), `*` (wildcard) and `...` (range) operators. [^2]
 
@@ -166,7 +166,7 @@ Logs are stored in `app/logs/`. There are two files:
 
 ---
 [^1]: The configuration presented is written in Python, but the configuration file [config.json](/config.json) is in JSON format. You can't use Anything() in JSON
-[^2]: [e926 search cheatsheet](https://e926.net/help/cheatsheet)
-[^3]: [e926 limits](https://e926.net/help/api#posts_list)
+[^2]: [e621 search cheatsheet](https://e621.net/help/cheatsheet)
+[^3]: [e621 limits](https://e621.net/help/api#posts_list)
 [^4]: [Telegram limits](https://limits.tginfo.me/)
 [^5]: [`datetime` — Python 3.11 documentation](https://docs.python.org/3.11/library/datetime.html#timedelta-objects)
