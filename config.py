@@ -1,6 +1,6 @@
 import os.path
 from datetime import datetime, timedelta
-from itertools import cycle
+from itertools import cycle, chain
 from json import load, dump
 
 from classes.anything import Anything
@@ -44,19 +44,35 @@ def get(key: str, *,
         return cached.get(key, DEFAULT[key])
 
 
-def get_schedule(dt: datetime):
-    dt = dt.replace(microsecond=0)
+def get_schedule(start_from: datetime):
+    schedule: list = get("schedule").copy()
+    schedule.sort()
+    start_from = start_from.replace(microsecond=0)
 
-    for time in cycle(get("schedule") + [""]):
-        if not time:
-            dt = dt.replace(day=dt.day+1, hour=0, minute=0, second=0)
-            continue
-
+    for i, time in enumerate(schedule):
         parsed = datetime.strptime(time, "%H:%M:%S")
-        replaced = dt.replace(hour=parsed.hour, minute=parsed.minute, second=parsed.second)
-        if replaced - timedelta(seconds=get("time_tolerance")) < dt:
+        dt_time = timedelta(hours=start_from.hour, minutes=start_from.minute, seconds=start_from.second)
+        pars_time = timedelta(hours=parsed.hour, minutes=parsed.minute, seconds=parsed.second)
+        if pars_time - timedelta(seconds=get("time_tolerance")) > dt_time:
+            break
+    else:
+        start_from = start_from + timedelta(days=1)
+        i = 0
+
+    start_from = start_from.replace(hour=0, minute=0, second=0)
+
+    for time in chain(schedule[i:] + [''], cycle(schedule + [''])):
+        if not time:
+            start_from = start_from + timedelta(days=1)
             continue
-        yield replaced
+
+        repl = replaced(start_from, time)
+        yield repl
+
+
+def replaced(dt: datetime, time: str) -> datetime:
+    parsed = datetime.strptime(time, "%H:%M:%S")
+    return dt.replace(hour=parsed.hour, minute=parsed.minute, second=parsed.second)
 
 
 def get_last_id():
