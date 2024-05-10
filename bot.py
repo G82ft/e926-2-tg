@@ -3,10 +3,11 @@ from os import getenv
 
 from pyrogram import Client
 from pyrogram.raw.functions.messages import GetScheduledHistory
+from pyrogram.errors import WebpageMediaEmpty
 
 import config
 from api import get_posts
-from logs import get_logger
+from logs import get_logger, get_skipped_logger
 
 bot = Client(
     "e621-2-tg",
@@ -16,6 +17,7 @@ bot = Client(
 )
 
 logger = get_logger(__name__)
+skipped = get_skipped_logger()
 
 
 async def main():
@@ -29,17 +31,21 @@ async def main():
         ))).messages
 
         schedule = config.get_schedule(datetime.now())
-        if len(scheduled) > 0:
+        schedule_date: datetime = next(schedule)
+        if (i := len(scheduled)) > 0:
             schedule = config.get_schedule(datetime.fromtimestamp(scheduled[0].date))
 
-        for i, post in enumerate(get_posts(config.get("tags")), start=len(scheduled)):
+        for post in get_posts(config.get("tags")):
             if i >= config.get("schedule_limit"):
                 logger.info(f'Schedule limit reached ({i})')
                 break
 
-            schedule_date = next(schedule)
-            logger.info(f'Scheduling post "{post}" at {schedule_date}')
-            await bot.send_photo(config.get("peer"), post, post, schedule_date=schedule_date)
+            if res := await send_post(post, schedule_date):
+                logger.debug(f'Scheduled post "{post}" at {schedule_date}')
+                i += 1
+                schedule_date = next(schedule)
+
+            logger.debug(f'Success: {res}')
         else:
             reached_end = True
 
@@ -52,3 +58,37 @@ async def main():
             value = int(post.split("/")[-1])
 
         config.set_last_id(value)
+
+
+async def send_post(post: str, schedule_date: datetime) -> bool:
+    logger.debug(f'Scheduling post "{post}" at {schedule_date}')
+
+    if config.get("post") == 'sample':
+        return await send_sample(post, schedule_date)
+
+    return await send_link(post, schedule_date, config.get("post") != 'link')
+
+
+async def send_sample(post: str, schedule_date: datetime) -> bool:
+    try:
+        await bot.send_photo(config.get("peer"), post, post, schedule_date=schedule_date)
+    except WebpageMediaEmpty:
+        skipped.warning(post)
+        logger.error(f'No sample for "{post}"')
+        match config.get("no_sample"):
+            case 'preview' | 'link':
+                return await send_link(post, schedule_date, config.get("no_sample") == 'preview')
+            case _:
+                logger.debug(f'Skipping "{post}"')
+                return False
+
+    return True
+
+
+async def send_link(post: str, schedule_date: datetime, preview: bool) -> bool:
+    await bot.send_message(
+        config.get("peer"), post,
+        disable_web_page_preview=not preview,
+        schedule_date=schedule_date
+    )
+    return True

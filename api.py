@@ -23,18 +23,17 @@ def get_posts(tags: str, validate: bool = False):
     start = (config.get("start_page") * DEFAULT_LIMIT // LIMIT) or 1
     end = config.get("end_page") * DEFAULT_LIMIT // LIMIT + 2  # +1 for range and +1 for floor
 
-    logger.debug(f'Getting posts from page {start} to {end}...')
+    logger.debug(f'Getting posts from page {start} to {end - 1}...')
 
     started: bool = validate
 
     for page in range(start, end):
         if tags.startswith("fav:!") and " " not in tags:
-            logger.debug(f'Favorites for user "{tags.split("!")[1]}", page {page}...')
             url = f'{ORIGIN}/favorites.json?user_id={tags.split("!")[1]}&page={page}&limit={LIMIT}'
         else:
-            logger.debug(f'Tags "{tags}", page {page}...')
             url = f'{ORIGIN}/posts.json?tags={quote_plus(tags)}&page={page}&limit={LIMIT}'
-        sleep(0.5)  # Rate limit (https://e621.net/help/api; Basic concepts > Rate limiting)
+        logger.debug(url)
+        sleep(0.5)  # Rate limit (https://e926.net/help/api; Basic concepts > Rate limiting)
 
         if "posts" not in (res := s.get(url).json()):
             logger.error(f'Failed to get posts: {res}')
@@ -50,8 +49,10 @@ def get_posts(tags: str, validate: bool = False):
 
             started = True
             if not is_blacklisted(post, config.get("blacklist")) or validate:
-                logger.debug(f'https://e621.net/posts/{post["id"]}')
-                yield f'https://e621.net/posts/{post["id"]}'
+                logger.debug(f'{ORIGIN}/posts/{post["id"]}')
+                yield f'{ORIGIN}/posts/{post["id"]}'
+
+            logger.debug(f'Blacklisted: {post["id"]}')
 
             if config.get("end_id") == post["id"]:
                 logger.info(f'End reached: {post["id"]}')
