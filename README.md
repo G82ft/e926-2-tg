@@ -12,6 +12,7 @@ Telegram userbot for scheduling image posts from [e926.net](https://e926.net).
 3. [Running](#running)
 4. [Scheduling](#scheduling)
 5. [Blacklist](#blacklist)
+6. [Logs](#logs)
 
 
 ## Dependencies
@@ -56,21 +57,21 @@ DEFAULT = {
 
 ### Arguments
 
-|  Argument name   |    Type     |                  Acceptable values                  | Explanation                                                                                                                                                                      |
-|:----------------:|:-----------:|:---------------------------------------------------:|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-|      `peer`      |    `str`    |                String without spaces                | Username of peer to whom bot will send the posts                                                                                                                                 |
-|      `tags`      |    `str`    |     String with valid tags separated by spaces      | String that represents a search on e926[^2]. If you want to send favourites in the order they were added, specify `fav:!{user_id}` as the only tag.                              |
-|      `post`      |    `str`    |         `"sample"`, `"preview"` or `"link"`         | Specifies format for sending posts. `"sample"` will send photo with link as caption, `"preview"` will use internal Telegram preview, and `"link"` will send link without preview |
-|   `no_sample`    |    `str`    |          `"skip"`, `"preview"` or `"link"`          | Specifies fallback option if there is no sample for this post. Same meaning as values in `post`                                                                                  |
-|  `use_last_id`   |   `bool`    |                  `true` or `false`                  | Starts with the last ID from the previous planning                                                                                                                               |
-|    `start_id`    |    `int`    |            Integer representing post ID             | Ignores all posts until this ID is encountered                                                                                                                                   |
-|     `end_id`     |    `int`    |            Integer representing post ID             | Schedules all posts until this ID is encountered                                                                                                                                 |
-|   `start_page`   |    `int`    | Integer from 1 to 750[^3] representing page number  | Ignores all posts until this page is reached (not accurate, take a page before the one you want to start with, and fine-tune with `start_id`)                                    |
-|   `start_page`   |    `int`    | Integer from 1 to 750[^3] representing page number  | Schedules all posts until this page is reached (not accurate, take a page after the one you want to end with, and fine-tune with `end_id`)                                       |
-| `schedule_limit` |    `int`    |             Integer from 1 to 100 [^4]              | Maximum numbers of scheduled messages (includes those already scheduled)                                                                                                         |
-|   `blacklist`    | `list[str]` | List of strings with valid tags separated by spaces | Same as blacklist on [e926.net](https://e926.net/help/blacklist) with some [minor changes](#blacklist)                                                                           |
-|    `schedule`    |    `str`    |     String representing time in format HH:MM:SS     | Daily posting [schedule](#scheduling)                                                                                                                                            |
-| `time_tolerance` |    `int`    | Integer from 0 to 3600*24 [^5] representing seconds | Tolerance for detecting already scheduled posts (Telegram clients tend to use current seconds by default when scheduling)                                                        |
+|  Argument name   |    Type     |                  Acceptable values                  | Explanation                                                                                                                                                                     |
+|:----------------:|:-----------:|:---------------------------------------------------:|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+|      `peer`      |    `str`    |                String without spaces                | Username of peer to whom bot will send the posts                                                                                                                                |
+|      `tags`      |    `str`    |     String with valid tags separated by spaces      | String that represents a search on e926[^2]. If you want to send favourites in the order they were added, specify `fav:!{user_id}` as the only tag.                             |
+|      `post`      |    `str`    |         `"sample"`, `"preview"` or `"link"`         | Specifies format for sending posts. `"sample"` will send photo with link as caption, `"preview"` will use internal Telegram preview and `"link"` will send link without preview |
+|   `no_sample`    |    `str`    |          `"skip"`, `"preview"` or `"link"`          | Specifies fallback option if there is no sample for this post. Same meaning as values in `post`. Will be ignored if `post` is not `"sample"`                                    |
+|  `use_last_id`   |   `bool`    |                  `true` or `false`                  | Starts with the last ID from the previous planning                                                                                                                              |
+|    `start_id`    |    `int`    |            Integer representing post ID             | Ignores all posts until this ID is encountered                                                                                                                                  |
+|     `end_id`     |    `int`    |            Integer representing post ID             | Schedules all posts until this ID is encountered                                                                                                                                |
+|   `start_page`   |    `int`    | Integer from 1 to 750[^3] representing page number  | Ignores all posts until this page is reached (not accurate, take a page before the one you want to start with, and fine-tune with `start_id`)                                   |
+|   `start_page`   |    `int`    | Integer from 1 to 750[^3] representing page number  | Schedules all posts until this page is reached (not accurate, take a page after the one you want to end with, and fine-tune with `end_id`)                                      |
+| `schedule_limit` |    `int`    |             Integer from 1 to 100 [^4]              | Maximum numbers of scheduled messages (includes those already scheduled)                                                                                                        |
+|   `blacklist`    | `list[str]` | List of strings with valid tags separated by spaces | Same as blacklist on [e926.net](https://e926.net/help/blacklist) with some [minor changes](#blacklist)                                                                          |
+|    `schedule`    |    `str`    |     String representing time in format HH:MM:SS     | Daily posting [schedule](#scheduling)                                                                                                                                           |
+| `time_tolerance` |    `int`    | Integer from 0 to 3600*24 [^5] representing seconds | Tolerance for detecting already scheduled posts (Telegram clients tend to use current seconds by default when scheduling)                                                       |
 
 
 ### Validating
@@ -155,6 +156,12 @@ For example:
 }
 ```
 
+
+## Logs
+
+Logs are stored in `app/logs/`. There are two files:
+- `logs.csv` - contains all logs.
+- `no_sample.log` - contains posts without sample. It will log all posts without sample no matter what you specify in `no_sample` config field (if you have specified to send posts with samples).
 
 
 ---
