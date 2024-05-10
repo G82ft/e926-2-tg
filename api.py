@@ -23,7 +23,7 @@ def get_posts(tags: str, validate: bool = False):
     start = (config.get("start_page") * DEFAULT_LIMIT // LIMIT) or 1
     end = config.get("end_page") * DEFAULT_LIMIT // LIMIT + 2  # +1 for range and +1 for floor
 
-    logger.debug(f'Getting posts from page {start} to {end-1}...')
+    logger.debug(f'Getting posts from page {start} to {end - 1}...')
 
     started: bool = validate
 
