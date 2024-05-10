@@ -1,6 +1,6 @@
-# e621-to-tg
+# e926-to-tg
 
-Telegram userbot for scheduling image posts from [e621.net](https://e621.net).
+Telegram userbot for scheduling image posts from [e926.net](https://e926.net).
 
 
 ## Table of contents
@@ -87,12 +87,12 @@ python3 validator.py [config]
 You must change [`config.json`](/config.json) ***before*** you build the image!
 ```shell
 cd e926-2-tg/
-docker build . -t e621-2-tg
+docker build . -t e926-2-tg
 ```
 
 When running, you must specify [timezone](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List) and phone number (without any spaces/symbols) via environment variables.
 ```shell
-docker run --rm -e "TZ=Europe/London" -e "PHONE=1234567890" e621-2-tg
+docker run --rm -e "TZ=Europe/London" -e "PHONE=1234567890" e926-2-tg
 ```
 Also, you can specify [LOG_LEVEL](https://docs.python.org/3.11/library/logging.html#logging-levels).
 
@@ -106,7 +106,7 @@ The bot checks daily if the schedule limit is reached. If not, it will add posts
 
 ## Blacklist
 
-Blacklist is made by hand to support multiple entries. It works as one on [e621.net](https://e621.net/help/blacklist), but tag syntax differs a bit.
+Blacklist is made by hand to support multiple entries. It works as one on [e926.net](https://e926.net/help/blacklist), but tag syntax differs a bit.
 
 It supports `-` (not) operator, but does not support the `~` (or), `*` (wildcard) and `...` (range) operators. [^2]
 
@@ -166,7 +166,7 @@ Logs are stored in `app/logs/`. There are two files:
 
 ---
 [^1]: The configuration presented is written in Python, but the configuration file [config.json](/config.json) is in JSON format. You can't use Anything() in JSON
-[^2]: [e621 search cheatsheet](https://e621.net/help/cheatsheet)
-[^3]: [e621 limits](https://e621.net/help/api#posts_list)
+[^2]: [e926 search cheatsheet](https://e926.net/help/cheatsheet)
+[^3]: [e926 limits](https://e926.net/help/api#posts_list)
 [^4]: [Telegram limits](https://limits.tginfo.me/)
 [^5]: [`datetime` — Python 3.11 documentation](https://docs.python.org/3.11/library/datetime.html#timedelta-objects)

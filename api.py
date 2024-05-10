@@ -8,9 +8,9 @@ import config
 from logs import get_logger
 
 s = requests.Session()
-s.headers["user-agent"] = "e621-2-tg-bot/test (by G82ft)"
+s.headers["user-agent"] = "e926-2-tg-bot/test (by G82ft)"
 
-ORIGIN: str = "https://e621.net"
+ORIGIN: str = "https://e926.net"
 DEFAULT_LIMIT: int = 75
 LIMIT: int = 320
 
@@ -26,6 +26,9 @@ def get_posts(tags: str, validate: bool = False):
     logger.debug(f'Getting posts from page {start} to {end - 1}...')
 
     started: bool = validate
+
+    if "rating:s" not in tags:  # TODO: e926 requires rating:s
+        tags = tags.strip() + " rating:s"
 
     for page in range(start, end):
         if tags.startswith("fav:!") and " " not in tags:
