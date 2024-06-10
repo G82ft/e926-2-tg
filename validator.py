@@ -1,6 +1,7 @@
 from argparse import ArgumentParser
 from datetime import datetime
 from os.path import abspath
+from json import load, JSONDecodeError
 
 from api import get_posts, s, ORIGIN
 from config import get, DEFAULT, get_last_id
@@ -12,35 +13,37 @@ parser: ArgumentParser = ArgumentParser(
 )
 
 parser.add_argument(
-    "config",
+    "config_path",
     nargs="?",
     default="config.json"
 )
-VALIDATION: tuple[tuple[str, tuple | dict, any], ...]
+VALIDATION: tuple[tuple[str, tuple | dict, any, bool], ...]
 ITEM: str = "item"
 
 logger = get_logger(__name__)
 
 
 def validate_config(file: str = "config.json") -> None:
+    logger.info(f'Validating "{abspath(file)}"...')
     invalid: bool = False
 
-    logger.info(f'Validating "{abspath(file)}"...')
-    for name, args, validate_arg in VALIDATION:
-        if is_default(name, config_file=file):
+    for name, args, validate_arg, mand in VALIDATION:
+        if is_default(name, config_path=file):
             logger.info(f'{name}: DEFAULT')
             continue
-        if check := validate_arg(get(name, config_file=file), name, *args):
+        if check := validate_arg(get(name, config_path=file), name, *args):
             logger.error(f"{name}: {check}")
             invalid = True
+            if mand:
+                break
             continue
 
         logger.info(f'{name}: OK')
 
-    logger.info(f'CONFIG: OK')
     if invalid:
-        logger.critical(f'CONFIG: FAILED')
-        exit(1)
+        invalidate()
+
+    logger.info(f'CONFIG: OK')
 
 
 def check_type(value: any, name: str, type_: type | tuple[type, ...]) -> str:
@@ -59,12 +62,25 @@ def check_range(value: any, name: str, min_: int, max_: int) -> str:
 
 def check_options(value: any, name: str, options: list) -> str:
     return (
-                check_type(value, name, type(options[0]))
-                or (
-                        value not in options
-                        and f'{name} must be in {options}.'
-                )
-        )
+            check_type(value, name, type(options[0]))
+            or (
+                    value not in options
+                    and f'{name} must be in {options}.'
+            )
+    )
+
+
+def check_config_path(config_path: str, name: str = "config_path") -> str:
+    if check := check_type(config_path, name, str):
+        return check
+
+    try:
+        with open(config_path) as f:
+            load(f)
+    except FileNotFoundError:
+        return f'File {abspath(config_path)} not found!'
+    except JSONDecodeError:
+        return f'{abspath(config_path)} is not a valid JSON!'
 
 
 def check_tags(tags: str, name: str = "tags") -> str:
@@ -114,27 +130,35 @@ def check_schedule(schedule: list, name: str = "schedule") -> str:
             return f'{name}:{ITEM} "{time}" must be in HH:MM:SS format.'
 
 
-def is_default(name: str, *, config_file: str) -> bool:
+def is_default(name: str, *, config_path: str) -> bool:
     if name == "start_id" and get("use_last_id") and get_last_id() is not None:
         return True
-    return get(name, config_file=config_file) == DEFAULT[name]
+    if name == "config_path":
+        return False
+    return get(name, config_path=config_path) == DEFAULT[name]
+
+
+def invalidate():
+    logger.critical(f'CONFIG: FAILED')
+    exit(1)
 
 
 VALIDATION = (
-    ("peer", (str,), check_type),
-    ("tags", (), check_tags),
-    ("post", (('sample', 'preview', 'link'),), check_options),
-    ("no_sample", (('skip', 'preview', 'link'),), check_options),
-    ("use_last_id", (bool,), check_type),
-    ("start_id", (), check_post_id),
-    ("end_id", (), check_post_id),
-    ("start_page", (1, 750), check_range),
-    ("end_page", (1, 750), check_range),
-    ("schedule_limit", (1, 100), check_range),
-    ("blacklist", (), check_blacklist),
-    ("schedule", (), check_schedule),
-    ("time_tolerance", (int,), check_type),
+    ("config_path", (), check_config_path, True),
+    ("peer", (str,), check_type, False),
+    ("tags", (), check_tags, False),
+    ("post", (('sample', 'preview', 'link'),), check_options, False),
+    ("no_sample", (('skip', 'preview', 'link'),), check_options, False),
+    ("use_last_id", (bool,), check_type, False),
+    ("start_id", (), check_post_id, False),
+    ("end_id", (), check_post_id, False),
+    ("start_page", (1, 750), check_range, False),
+    ("end_page", (1, 750), check_range, False),
+    ("schedule_limit", (1, 100), check_range, False),
+    ("blacklist", (), check_blacklist, False),
+    ("schedule", (), check_schedule, False),
+    ("time_tolerance", (int,), check_type, False),
 )
 
 if __name__ == "__main__":
-    validate_config(parser.parse_args().config)
+    validate_config(parser.parse_args().config_path)
