@@ -8,7 +8,7 @@ import config
 from logs import get_logger
 
 s = requests.Session()
-s.headers["user-agent"] = "e621-2-tg-bot/test (by G82ft)"
+s.headers["user-agent"] = "e926-2-tg-bot/test (by G82ft)"
 
 ORIGIN: str = "https://e621.net"
 DEFAULT_LIMIT: int = 75
@@ -33,7 +33,7 @@ def get_posts(tags: str, validate: bool = False):
         else:
             url = f'{ORIGIN}/posts.json?tags={quote_plus(tags)}&page={page}&limit={LIMIT}'
         logger.debug(url)
-        sleep(0.5)  # Rate limit (https://e621.net/help/api; Basic concepts > Rate limiting)
+        sleep(0.5)  # Rate limit (https://e926.net/help/api; Basic concepts > Rate limiting)
 
         if "posts" not in (res := s.get(url).json()):
             logger.error(f'Failed to get posts: {res}')
@@ -85,7 +85,7 @@ def is_entry_matches(post: dict, entry: str) -> bool:
 
         results.append(result)
 
-    return all(results)
+    return all(results) and bool(results)
 
 
 def get_tags(post: dict) -> tuple[str]:
