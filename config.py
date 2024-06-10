@@ -30,7 +30,9 @@ cached: dict[str: int | str | list[str | dict[str: str]]] = {}
 
 
 def get(key: str, *,
-        config_file: str = "config.json") -> int | Anything | str | list[str | dict[str: str]]:
+        config_path: str = "config.json") -> int | Anything | str | list[str | dict[str: str]]:
+    if key == "config_path":
+        return config_path
     if key not in DEFAULT:
         raise KeyError(key)
     elif key == "start_id":
@@ -41,7 +43,7 @@ def get(key: str, *,
     if cached:
         return cached.get(key, DEFAULT[key])
 
-    with open(config_file, "r", encoding="utf-8") as f:
+    with open(config_path, "r", encoding="utf-8") as f:
         cached = load(f)
         return cached.get(key, DEFAULT[key])
 
