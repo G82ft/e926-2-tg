@@ -10,7 +10,7 @@ from logs import get_logger
 s = requests.Session()
 s.headers["user-agent"] = "e926-2-tg-bot/test (by G82ft)"
 
-ORIGIN: str = "https://e621.net"
+ORIGIN: str = "https://e926.net"
 DEFAULT_LIMIT: int = 75
 LIMIT: int = 320
 
