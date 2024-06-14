@@ -9,4 +9,4 @@ RUN apk add --no-cache tzdata #nano
 RUN crontab -l | { cat; echo "00	12	*	*	*	cd /app && python3 main.py"; } | crontab -
 
 #CMD ["/bin/ash"]
-CMD ["crond", "-f"]
+CMD ["sh", "main.sh"]
