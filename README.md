@@ -2,7 +2,7 @@
 
 Telegram userbot for scheduling image posts from [e926.net](https://e926.net).
 
-# There is a moderate [security issue](https://github.com/psf/requests/pull/6655). Update will be release soon.
+# There is a moderate [security issue](https://github.com/psf/requests/pull/6655). Update will be released soon.
 
 
 ## Table of contents
