@@ -59,10 +59,10 @@ def get_posts(tags: str, validate: bool = False):
 
 
 def is_blacklisted(post: dict, blacklist: list[str]) -> bool:
-    return any(is_entry_matches(post, entry) for entry in blacklist)
+    return any(is_match(post, entry) for entry in blacklist)
 
 
-def is_entry_matches(post: dict, entry: str) -> bool:
+def is_match(post: dict, entry: str) -> bool:
     tags: tuple[str] = get_tags(post)
 
     results: list[bool] = []
@@ -114,23 +114,23 @@ class Test(TestCase):
         'rating': 's'
     }
 
-    def test_is_entry_matches(self):
+    def test_is_match(self):
         post = self.post.copy()
         # Basic check
-        self.assertTrue(is_entry_matches(post, "fox"))
-        self.assertFalse(is_entry_matches(post, "dog"))
+        self.assertTrue(is_match(post, "fox"))
+        self.assertFalse(is_match(post, "dog"))
 
         # Multiple tags
-        self.assertTrue(is_entry_matches(post, "fox fluffy"))
-        self.assertFalse(is_entry_matches(post, "fox angiewolf"))
+        self.assertTrue(is_match(post, "fox fluffy"))
+        self.assertFalse(is_match(post, "fox angiewolf"))
 
         # Negative tags
-        self.assertTrue(is_entry_matches(post, "-dog"))
-        self.assertFalse(is_entry_matches(post, "-fox"))
+        self.assertTrue(is_match(post, "-dog"))
+        self.assertFalse(is_match(post, "-fox"))
 
         # Multiple tags + negative tags
-        self.assertTrue(is_entry_matches(post, "fox -female"))
-        self.assertFalse(is_entry_matches(post, "female -fluffy"))
+        self.assertTrue(is_match(post, "fox -female"))
+        self.assertFalse(is_match(post, "female -fluffy"))
 
     def test_is_blacklisted(self):
         post = self.post.copy()
