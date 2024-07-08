@@ -35,7 +35,11 @@ async def main():
         if (i := len(scheduled)) > 0:
             schedule = config.get_schedule(datetime.fromtimestamp(scheduled[0].date))
 
-        for post in get_posts(config.get("tags")):
+        posts = get_posts(config.get("tags"))
+        if config.get("reversed"):
+            posts = reversed(posts)
+
+        for post in posts:
             if i >= config.get("schedule_limit"):
                 logger.info(f'Schedule limit reached ({i})')
                 break

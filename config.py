@@ -23,10 +23,11 @@ DEFAULT: dict[str: int | str | list[str | dict[str: str]]] = {
     "schedule": [
         "12:00:00"
     ],
-    "time_tolerance": 60
+    "time_tolerance": 60,
+    "reversed": False
 }
 
-cached: dict[str: int | str | list[str | dict[str: str]]] = {}
+cached: dict[str: bool | int | str | list[str]] = {}
 
 
 def get(key: str, *,

@@ -158,6 +158,7 @@ VALIDATION = (
     ("blacklist", (), check_blacklist, False),
     ("schedule", (), check_schedule, False),
     ("time_tolerance", (int,), check_type, False),
+    ("reversed", (bool,), check_type, False),
 )
 
 if __name__ == "__main__":
