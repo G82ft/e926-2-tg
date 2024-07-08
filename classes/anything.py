@@ -10,3 +10,4 @@ class Test(TestCase):
     def test_anything(self):
         self.assertTrue(1 == Anything())
         self.assertTrue(Anything() == 1)
+        self.assertTrue(Anything() == Anything())
