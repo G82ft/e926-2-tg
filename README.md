@@ -52,7 +52,8 @@ DEFAULT = {
     "schedule": [
         "12:00:00"
     ],
-    "time_tolerance": 60
+    "time_tolerance": 60,
+    "reversed": False
 }
 ```
 
