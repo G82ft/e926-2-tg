@@ -4,7 +4,7 @@
     "end_page": 10,
     "schedule_limit": 10,
     "blacklist": [
-        "rating:q"
+        "rabbit"
     ],
     "schedule": [
         "10:00:00",
