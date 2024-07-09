@@ -37,7 +37,7 @@ async def main():
 
         posts = get_posts(config.get("tags"))
         if config.get("reversed"):
-            posts = reversed(posts)
+            posts = reversed(tuple(posts))
 
         for post in posts:
             if i >= config.get("schedule_limit"):
@@ -76,7 +76,7 @@ async def send_sample(post: str, schedule_date: datetime) -> bool:
     try:
         await bot.send_photo(config.get("peer"), post, post, schedule_date=schedule_date)
     except WebpageMediaEmpty:
-        skipped.warning(post)
+        skipped.critical(post)
         logger.error(f'No sample for "{post}"')
         match config.get("no_sample"):
             case 'preview' | 'link':
