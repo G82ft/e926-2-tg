@@ -98,6 +98,11 @@ Clone the repository:
 git clone https://github.com/G82ft/e926-2-tg.git
 ```
 
+Checkout e621:
+```shell
+git checkout -B e621 origin/e621
+```
+
 After that, [config](#config)ure the bot.
 
 Finally, build the image:
