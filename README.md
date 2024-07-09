@@ -110,7 +110,7 @@ docker build . -t e926-2-tg
 
 Download the image from the [releases page](/releases). To load the image use:
 ```shell
-docker load -i e926-2-tg_v1.1.tar
+docker load -i e926-2-tg_v1.2.tar
 ```
 
 Default config will be provided in this image. The only way to change it is to attach to the container running this image.
