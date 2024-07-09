@@ -31,9 +31,10 @@ async def main():
         ))).messages
 
         schedule = config.get_schedule(datetime.now())
-        schedule_date: datetime = next(schedule)
         if (i := len(scheduled)) > 0:
             schedule = config.get_schedule(datetime.fromtimestamp(scheduled[0].date))
+
+        schedule_date: datetime = next(schedule)
 
         posts = get_posts(config.get("tags"))
         if config.get("reversed"):
